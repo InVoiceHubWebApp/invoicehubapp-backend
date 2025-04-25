@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "name": "Python: Module",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["api.main:main", "--reload", "--factory"],
+      "envFile": "./api/.env",
+      "python": ".venv/bin/python"
+    },
+    {
+      "name": "Python: Module (Windows)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["api.main:main", "--reload", "--factory"],
+      "envFile": "${workspaceFolder}/.env",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe"
+    }
+  ]
+}

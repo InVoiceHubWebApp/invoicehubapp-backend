@@ -1,0 +1,21 @@
+[project]
+name = "invoicehub-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "alembic>=1.14.1",
+    "email-validator>=2.2.0",
+    "fastapi>=0.115.8",
+    "psycopg2-binary>=2.9.10",
+    "pwdlib[argon2]>=0.2.1",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.7.1",
+    "pyjwt>=2.10.1",
+    "python-dateutil>=2.9.0.post0",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.37",
+    "sqlmodel>=0.0.22",
+    "uvicorn>=0.34.0",
+]
