@@ -86,30 +86,31 @@ def read_invoices(
     invoices = db.scalars(query.offset(offset).limit(size))
 
     payments = []
-    now = datetime.now()
-    current_date = datetime(now.year, now.month, 1)
+    current_date = datetime.now()
 
     for invoice in invoices:
         payment = invoice.model_dump()
         creditor = invoice.responsible_creditor
-        purchase_date = invoice.purchase_date + relativedelta(months=+1)
+        purchase_date = invoice.purchase_date
         if invoice.purchase_date.day > creditor.due_date.day:
             purchase_date += relativedelta(months=+1)
+
         if payment["installments"] is not None:
             payment["installment_value"] = invoice.value / invoice.installments
+            months = invoice.installments - 1
             payment["last_payment_date"] = purchase_date + relativedelta(
-                months=+invoice.installments - 1
+                months=+months
             )
         else:
             payment["last_payment_date"] = purchase_date
         payment["responsible_creditor"] = invoice.responsible_creditor
         payment["external_payments"] = invoice.external_payments
-        purchase_date = datetime(
-            invoice.purchase_date.year, invoice.purchase_date.month, 1
-        )
-        payment["installment_paid"] = (
-            relativedelta(dt1=current_date, dt2=purchase_date).months - 1
-        )
+        
+        date = datetime(purchase_date.year, purchase_date.month, creditor.due_date.day)
+        purchase_date = relativedelta(current_date, date)
+        months = purchase_date.years * 12 + purchase_date.months
+
+        payment["installment_paid"] = months + 1
         if payment["installment_paid"] < 0:
             payment["installment_paid"] = 0
         payments.append(payment)
@@ -170,7 +171,7 @@ def mark_all_as_paid(
             and_(
                 Invoice.invoice_parent_id == None,
                 Invoice.enabled,
-                Invoice.paid_status != "PAID",
+                Invoice.paid_status == "PENDING",
                 or_(
                     Invoice.payment_type == "INSTALLMENT",
                     Invoice.payment_type == "CASH",
